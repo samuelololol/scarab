@@ -1,1 +1,0 @@
-https://github.com/samuelololol/scarab_util/archive/master.zip#egg=scarab_util
