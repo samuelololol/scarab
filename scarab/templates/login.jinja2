@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" xmlns:tal="http://xml.zope.org/namespaces/tal">
+<head>
+  <title>Login</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+  <link rel="shortcut icon" href="static/favicon.ico" />
+  <link rel="stylesheet" href="static/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="static/css/bootstrap-theme.min.css"/>
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="static/js/bootstrap.min.js"></script>
+<style>
+
+body{
+  position: fixed;
+  height: 100%;
+  width: 100%;
+}
+
+.background-image {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 0;
+  bottom: 0;
+  top: 0;
+
+  background: url('{{image_url}}') no-repeat center center fixed; 
+  background-size: 100% auto;
+
+  -webkit-filter: /* cover;*/blur(19px) grayscale(95%);
+  -moz-filter:    /* cover;*/blur(19px) grayscale(95%);
+  -o-filter:      /* cover;*/blur(19px) grayscale(95%);
+  -ms-filter:     /* cover;*/blur(19px) grayscale(95%);
+  filter:         /* cover;*/blur(19px) grayscale(95%);
+}
+
+.container{
+  position: relative;
+  z-index: 9999;
+
+}
+.panel-default {
+  opacity: 0.95;
+  margin-top:80px;
+}
+.form-group.last {
+  margin-bottom:0px;
+}
+</style>
+</head>
+<body>
+  <div class="background-image"></div>
+  <div class="container">
+      <div class="row">
+          <div class="col-md-4 col-md-offset-7">
+              <div class="panel panel-default">
+                  <div class="panel-heading"> <strong class="">Login</strong>
+                  </div>
+                  <div class="panel-body">
+                      <form class="form-horizontal" role="form" action='/api/v1/login' method='post'>
+                          <div class="form-group">
+                              <label for="inputEmail3" class="col-sm-3 control-label">Account</label>
+                              <div class="col-sm-9">
+                                  <input class="form-control" id="inputEmail3" name="username" placeholder="Account" required=true>
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label for="inputPassword3" class="col-sm-3 control-label">Password</label>
+                              <div class="col-sm-9">
+                                  <input type="password" class="form-control" id="inputPassword3" name="password" placeholder="Password" required=true>
+                              </div>
+                          </div>
+                          <div class="form-group last">
+                              <div class="col-sm-offset-3 col-sm-9">
+                                  <button type="submit" class="btn btn-success btn-sm">Sign in</button>
+                              </div>
+                          </div>
+                      </form>
+                  </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</body>
+</html>

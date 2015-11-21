@@ -1,0 +1,5 @@
+scarab.egg*
+*pyc
+*sqlite
+localdev.ini
+.cache/*

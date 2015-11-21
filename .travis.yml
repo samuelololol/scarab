@@ -1,0 +1,19 @@
+language: python
+
+python:
+    - "2.6"
+    - "2.7"
+before_install:
+    - sudo apt-get update -qq
+    - sudo apt-get install -qq postgresql -y
+services:
+    - postgresql
+#before_script:
+#    - psql -c 'create database postgres;' -U postgres
+#<already exists>.
+env:
+    - PIP_USE_MIRRORS=true
+install: 
+    - pip install webtest
+    - python setup.py install
+script: "python setup.py test"

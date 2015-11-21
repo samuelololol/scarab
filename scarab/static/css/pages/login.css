@@ -1,0 +1,15 @@
+body { 
+    background: url('http://163.29.3.94/webdemo/images/banner.jpg') no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+.panel-default {
+     opacity: 0.95;
+      margin-top:80px;
+
+}
+.form-group.last {
+     margin-bottom:0px;
+}
