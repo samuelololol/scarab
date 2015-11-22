@@ -8,13 +8,14 @@ import time
 
 from scarab import models
 
-import os,sys,inspect
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0,parentdir) 
-
-from common.db import DBSession
-from common.utils import id_generator
+#import os,sys,inspect
+#currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+#parentdir = os.path.dirname(currentdir)
+#sys.path.insert(0,parentdir) 
+#from common.db import DBSession
+#from common.utils import id_generator
+from scarab.test.common.db import DBSession
+from scarab.test.common.utils import id_generator
 
 
 @pytest.fixture(scope='module')
