@@ -29,7 +29,7 @@ def usage(argv):
           '(example: "%s development.ini")' % (cmd, cmd))
     sys.exit(1)
 
-def initialization(Base, DBSession, engine, drop_all=True):
+def initialization(engine, drop_all=True):
     #clean up
     with transaction.manager:
         if drop_all:
@@ -64,7 +64,7 @@ def main(argv=sys.argv):
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
 
-    initialization(Base=Base, DBSession=DBSession, engine=engine)
+    initialization(engine=engine)
     logger.info('DB initialization done.')
 
 

@@ -9,6 +9,7 @@ import os
 import hashlib
 
 from scarab import models
+from scarab.models import DBSession
 
 #import os,sys,inspect
 #currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -16,13 +17,14 @@ from scarab import models
 #sys.path.insert(0,parentdir) 
 #from common.db import DBSession
 #from common.utils import id_generator
-from scarab.test.common.db import DBSession
+from scarab.test.common.db import engine
 from scarab.test.common.utils import id_generator
 from test_group_table import A_group
 
 
+
 @pytest.fixture(scope='module')
-def A_user(request, DBSession, A_group):
+def A_user(request, engine, A_group):
     user_table = models.account.User_TB
 
     user_name=id_generator(size=25).decode('utf-8')
@@ -52,12 +54,12 @@ def A_user(request, DBSession, A_group):
     return user
 
 
-def test_query_user(DBSession, A_user):
+def test_query_user(engine, A_user):
     user_table = models.account.User_TB
     model = DBSession.query(user_table).filter(user_table.user_name == A_user.user_name).scalar()
     assert model.user_name == A_user.user_name
 
-def test_modify_user(DBSession, A_user):
+def test_modify_user(engine, A_user):
     user_table = models.account.User_TB
 
     original_user_id = A_user.user_id
@@ -69,7 +71,7 @@ def test_modify_user(DBSession, A_user):
         find_user = DBSession.query(user_table).filter(user_table.user_name == new_user_name).scalar()
         assert A_user.user_id == find_user.user_id
 
-def test_delete_user(DBSession, A_group):
+def test_delete_user(engine, A_group):
     user_table = models.account.User_TB
 
     user_name=id_generator(size=25).decode('utf-8')
@@ -90,7 +92,7 @@ def test_delete_user(DBSession, A_group):
         model = DBSession.query(user_table).filter(user_table.user_id == user.user_id).first()
         assert model == None
 
-def test_change_password(DBSession, A_user):
+def test_change_password(engine, A_user):
     user_table = models.account.User_TB
     original_user_name = A_user.user_name
 
