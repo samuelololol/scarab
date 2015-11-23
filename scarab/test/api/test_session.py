@@ -21,6 +21,15 @@ def test_session_post(ScarabApp):
     print res.body
     assert json.loads(res.body)['success']== True
 
+def test_session_post_fail(ScarabApp):
+    form = dict()
+    form['username'] = 'public'
+    form['password'] = '123456'
+    res = ScarabApp.post('/api/v1/session', form, expect_errors=True)
+    print res.body
+    assert json.loads(res.body)['success']== False
+
+
 def test_session_delete(ScarabApp):
     form = dict()
     form['username'] = 'public'
