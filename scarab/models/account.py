@@ -108,7 +108,7 @@ class User_TB(Base):
         self.password = hashed_pwd
         DBSession.add(self)
         DBSession.flush()
-        logger.info('user %s password changed' % user_name)
+        logger.info('user %s password changed' % self.user_name)
         rtn = (True, None)
         return rtn
 
