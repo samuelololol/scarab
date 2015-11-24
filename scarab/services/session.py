@@ -15,9 +15,8 @@ def login(request, username, password):
         logger.warning(err_msg)
         return False, err_msg
 
-    logger.debug('username: %s password: %s' % (username, password))
-    logger.debug('what is my DBSession engine: %s' % DBSession.get_bind())
     user = DBSession.query(User_TB).filter(User_TB.user_name == username.decode('utf-8')).scalar()
+    logger.debug('trying to find user with username: %s, result: %s' % (username, user))
 
     headers = None
     success  = False
