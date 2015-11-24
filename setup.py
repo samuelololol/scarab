@@ -7,6 +7,10 @@ README = open(os.path.join(here, 'README.txt')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 
 requires = [
+    'scarab-util',
+    'BeautifulSoup',
+    'requests',
+    'celery[redis]',
     'pyramid==1.6b2',
     'SQLAlchemy',
     'transaction',
@@ -15,18 +19,15 @@ requires = [
     'pyramid-jinja2',
     'zope.sqlalchemy',
     'formencode',
+    'webtest',
     'waitress',
     #'MySQL-python',
     #'PyMySQL', #pure python
-    'celery[redis]',
-    'BeautifulSoup',
-    'requests',
     #'uwsgi',
     'psycopg2', #for postgresql, there is only non-pure pyhton lib
-    'pytest',
     'pytest-capturelog',
-    'webtest',
-    'scarab-util',
+    'pytest-cov',
+    'pytest',
     ]
 
 class PyTest(TestCommand):
