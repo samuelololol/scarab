@@ -45,8 +45,9 @@ class SessionAPI(object):
         try:
             login_form = {'username': self.request.POST.get('username', None),
                           'password': self.request.POST.get('password', None)}
+            logger.debug('input: %s' % login_form)
             params = Schema_login_post.to_python(login_form)
-            print params
+            logger.debug('after to_python params: %s' % params)
         except Invalid, invalid_exception:
             err_msg = invalid_exception.unpack_errors()
             logger.warning(err_msg)

@@ -90,15 +90,19 @@ class User_TB(Base):
         db_pass_len = len(self.password)
         test_pass_len = len(test_pwd)
         result = db_pass_len ^ test_pass_len
+        print 'result: %s' % result
         if result != 0:
+            logger.warning('user: %s password length incorrect' % name)
             return (False, 'password incorrect.')
 
         for i in xrange(db_pass_len):
             result += (ord(test_pwd[i]) ^ ord(self.password[i]))
 
+        print 'result: %s' % result
         if result == 0:
             return (True, 'password is correct')
         else:
+            logger.warning('user: %s password incorrect' % name)
             return (False, 'password is incorrect.')
 
     @ModelMethod(logger)
