@@ -25,7 +25,7 @@ requires = [
     'psycopg2', #for postgresql, there is only non-pure pyhton lib
     'pytest',
     'pytest-capturelog',
-    'webtest'
+    'webtest',
     'scarab-util',
     ]
 
