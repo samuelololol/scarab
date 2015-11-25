@@ -4,8 +4,7 @@ __date__= 'Nov 21, 2015 '
 __author__= 'samuel'
 
 import pytest
-from scarab.apis.session import SessionAPI
-from scarab.test.common.functional import Request, Resource, ScarabApp
+from scarab.test.common.functional import ScarabApp
 
 import webtest
 import json
