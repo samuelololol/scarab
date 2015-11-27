@@ -19,7 +19,7 @@ from scarab.models import DBSession
 #from common.utils import id_generator
 from scarab.test.common.db import engine
 from scarab.test.common.utils import id_generator
-from test_group_table import A_group
+from test_model_group_table import A_group
 
 
 
