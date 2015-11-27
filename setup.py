@@ -20,6 +20,7 @@ requires = [
     'pyramid-jinja2',
     'zope.sqlalchemy',
     'formencode',
+    'lxml',
     'webtest',
     'waitress',
     #'MySQL-python',
