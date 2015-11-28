@@ -9,6 +9,7 @@ import random
 
 
 def get_nationalgeographic_image_url():
+    return ''
     url = 'http://photography.nationalgeographic.com/photography/photo-of-the-day'
     #r = requests.get(url + '/archive/')
     r = requests.get(url + '/nature-weather/')

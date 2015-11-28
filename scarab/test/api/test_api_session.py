@@ -4,12 +4,11 @@ __date__= 'Nov 21, 2015 '
 __author__= 'samuel'
 
 import pytest
-from scarab.test.common.functional import ScarabApp
 
 import webtest
 import json
 
-def test_session_post(ScarabApp):
+def test_session_post(sqlite_engine_fixture, ScarabApp):
     print 'test_session_post()'
     res = ScarabApp.post('/api/v1/session', expect_errors=True)
     print 'fail response status code: %s' % res.status_int
@@ -24,7 +23,7 @@ def test_session_post(ScarabApp):
     print res.body
     assert json.loads(res.body)['success']== True
 
-def test_session_post_fail(ScarabApp):
+def test_session_post_fail(sqlite_engine_fixture, ScarabApp):
     print 'test_session_post_fail()'
     form = dict()
     form['username'] = 'public'
@@ -34,7 +33,7 @@ def test_session_post_fail(ScarabApp):
     assert json.loads(res.body)['success']== False
 
 
-def test_session_delete(ScarabApp):
+def test_session_delete(sqlite_engine_fixture, ScarabApp):
     print 'test_session_delete()'
     form = dict()
     form['username'] = 'public'
@@ -48,12 +47,12 @@ def test_session_delete(ScarabApp):
     res = ScarabApp.delete('/api/v1/session', expect_errors=True)
     assert res.status_int == 403 
 
-def test_session_put(ScarabApp):
+def test_session_put(sqlite_engine_fixture, ScarabApp):
     print 'test_session_put()'
     res = ScarabApp.put('/api/v1/session', expect_errors=True)
     assert res.status_int == 404
 
-def test_session_get(ScarabApp):
+def test_session_get(sqlite_engine_fixture, ScarabApp):
     print 'test_session_get()'
     res = ScarabApp.get('/api/v1/session', expect_errors=True)
     assert res.status_int == 404

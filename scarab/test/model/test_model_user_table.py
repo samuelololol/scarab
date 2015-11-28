@@ -11,20 +11,12 @@ import hashlib
 from scarab import models
 from scarab.models import DBSession
 
-#import os,sys,inspect
-#currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-#parentdir = os.path.dirname(currentdir)
-#sys.path.insert(0,parentdir) 
-#from common.db import DBSession
-#from common.utils import id_generator
-from scarab.test.common.db import engine
-from scarab.test.common.utils import id_generator
+from utils import id_generator
 from test_model_group_table import A_group
 
 
-
 @pytest.fixture(scope='module')
-def A_user(request, engine, A_group):
+def A_user(request, sqlite_engine_fixture, A_group):
     user_table = models.account.User_TB
 
     user_name=id_generator(size=25).decode('utf-8')
@@ -40,26 +32,26 @@ def A_user(request, engine, A_group):
                             )
         assert success == True
 
-    print '(fixture)=>A_user created'
+    print '(A_user fixture)=> created'
     def fin():
         model = DBSession.query(user_table).filter(user_table.user_id == user.user_id).scalar()
         if model:
             DBSession.delete(model)
             DBSession.flush()
             transaction.commit()
-            print '(fixture)=>A_user delete'
+            print '(A_user fixture)=> delete'
         if DBSession.dirty:
             transaction.commit()
     request.addfinalizer(fin)
     return user
 
 
-def test_query_user(engine, A_user):
+def test_query_user(sqlite_engine_fixture, A_user):
     user_table = models.account.User_TB
     model = DBSession.query(user_table).filter(user_table.user_name == A_user.user_name).scalar()
     assert model.user_name == A_user.user_name
 
-def test_modify_user(engine, A_user):
+def test_modify_user(sqlite_engine_fixture, A_user):
     user_table = models.account.User_TB
 
     original_user_id = A_user.user_id
@@ -71,7 +63,7 @@ def test_modify_user(engine, A_user):
         find_user = DBSession.query(user_table).filter(user_table.user_name == new_user_name).scalar()
         assert A_user.user_id == find_user.user_id
 
-def test_delete_user(engine, A_group):
+def test_delete_user(sqlite_engine_fixture, A_group):
     user_table = models.account.User_TB
 
     user_name=id_generator(size=25).decode('utf-8')
@@ -92,7 +84,7 @@ def test_delete_user(engine, A_group):
         model = DBSession.query(user_table).filter(user_table.user_id == user.user_id).first()
         assert model == None
 
-def test_change_password(engine, A_user):
+def test_change_password(sqlite_engine_fixture, A_user):
     user_table = models.account.User_TB
     original_user_name = A_user.user_name
 
