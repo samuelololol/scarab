@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-
 __date__= 'Nov 28, 2015 '
 __author__= 'samuel'
+import logging
+FORMAT = "%(asctime)s %(levelname)-5.5s [%(name)s][%(threadName)s] %(message)s"
+logging.basicConfig(format=FORMAT)
+logging.getLogger().addHandler(logging.StreamHandler())
 
 import sys
 import ConfigParser
