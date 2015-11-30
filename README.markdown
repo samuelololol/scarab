@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/samuelololol/scarab.svg?branch=master)](https://travis-ci.org/samuelololol/scarab)
+![logo][2]
 # scarab README
 
 ## Getting Started
@@ -33,4 +34,9 @@ or just edit the sqlalchemy setting in `development.ini`.
 1. home page
     * remove pyramid home page
     * merge `Twitter-BootStrap` to tempalte
+
+
+
+
+[2]: https://raw.github.com/samuelololol/scarab/master/.logo/2.jpg
 
