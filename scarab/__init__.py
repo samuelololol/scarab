@@ -30,6 +30,11 @@ def main(global_config, **settings):
     global DBSession, Base
     engine = engine_from_config(settings, 'sqlalchemy.')
 
+    scarab_settings = {}
+    scarab_settings['backend_db'] = settings['backend_db']
+    def get_luwak_settings(request):
+        return scarab_settings
+
     #enable sqlite foreignkey if sqlite
     if 'sqlite' == settings['backend_db']:
         event.listen(engine, 'connect', _fk_pragma_on_connect) #db foreignkey on
@@ -48,6 +53,7 @@ def main(global_config, **settings):
 
     #embeded userojb to request
     config.add_request_method(get_user, 'user', reify=True)
+    config.add_request_method(get_luwak_settings, 'scarab_settings', reify=True)
 
     #all setting is done, scan config
     config.scan()

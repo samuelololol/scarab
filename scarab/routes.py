@@ -8,6 +8,8 @@ api_version = 1
 
 def api_routes(config):
     #apis
+    config.add_route('api_users',  api_prefix + '1' + '/users') #scarab_util generated
+    config.add_route('api_user',  api_prefix + '1' + '/user/{id:\d+}')
     config.add_route('api_session',  api_prefix + str(api_version) + '/session')
 
     #pages

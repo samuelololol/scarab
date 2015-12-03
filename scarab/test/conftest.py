@@ -39,24 +39,38 @@ def db_config(key):
     return DB_URL
 
 @pytest.fixture(scope='session')
-def sqlite_engine_fixture(request):
-    db_path = tempfile.NamedTemporaryFile(suffix='.sqlite', delete=False).name #use tempfile directly
-    DB_URL = 'sqlite:///' + db_path
-    engine = create_engine(DB_URL, poolclass=NullPool)
-    connection = engine.connect()
-    DBSession.configure(bind=engine)
-    Base.metadata.bind = engine
-    print '(sqlite_engine_fixture) created, sqlite file: %s' % db_path
+def engine_fixture(request):
+    backend_db = db_config('backend_db')
+    print 'backend_db: %s' % backend_db
+    if backend_db == 'sqlite':
+        db_path = tempfile.NamedTemporaryFile(suffix='.sqlite', delete=False).name #use tempfile directly
+        DB_URL = 'sqlite:///' + db_path
+        engine = create_engine(DB_URL, poolclass=NullPool)
+        connection = engine.connect()
+        DBSession.configure(bind=engine)
+        Base.metadata.bind = engine
+        print '(sqlite_engine_fixture) created, sqlite file: %s' % db_path
+    else:
+        DB_URL = db_config('sqlalchemy.url')
+        engine = create_engine(DB_URL)
+        connection = engine.connect()
+        DBSession.configure(bind=engine)
+        Base.metadata.bind = engine
+        print '(postgres_engine_fixture) created, postgres url: %s' % DB_URL
     def fin():
         DBSession.close()
         DBSession.remove()
         connection.close()
-        os.unlink(db_path)
-        print '(sqlite_engine_fixture) delete, remove sqlitedb file: %s' % db_path
+        if backend_db == 'sqlite':
+            os.unlink(db_path)
+            print '(sqlite_engine_fixture) delete, remove sqlitedb file: %s' % db_path
+        else:
+            print '(postgres_engine_fixture) fin with postgresdb url: %s' % DB_URL
     request.addfinalizer(fin)
-    return engine
+    #return engine
+    return backend_db
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='session')
 def ScarabApp(request):
     settings = {'sqlalchemy.url':     db_config('sqlalchemy.url'),
                 'backend_db':         db_config('backend_db'),

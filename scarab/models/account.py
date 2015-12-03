@@ -12,6 +12,7 @@ from scarab.common import ModelMethod
 
 from sqlalchemy import Column
 from sqlalchemy import ForeignKey
+from sqlalchemy import func
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import backref
 
@@ -32,7 +33,7 @@ import hashlib
 
 
 class Group_TB(Base):
-    __tablename__ = 'group'
+    __tablename__ = 'groupt'
 
     group_id        = Column(Integer,      nullable=False, unique=True, primary_key=True, autoincrement=True)
     group_name      = Column(Unicode(255), nullable=False, unique=True, index=True)
@@ -49,7 +50,7 @@ class Group_TB(Base):
 
 
 class User_TB(Base):
-    __tablename__ = 'user'
+    __tablename__ = 'usert'
 
     user_id         = Column(Integer,      nullable=False, unique=True, primary_key=True, autoincrement=True)
     user_name       = Column(Unicode(255), nullable=False, unique=True, index=True)
@@ -61,7 +62,7 @@ class User_TB(Base):
     updateddatetime = Column(DateTime,     nullable=False)
 
     #fk
-    group_id      = Column(Integer, ForeignKey('group.group_id'), nullable=False, unique=False)
+    group_id      = Column(Integer, ForeignKey('groupt.group_id'), nullable=False, unique=False)
 
     def __init__(self, *args, **kwargs):
         self.createddatetime = datetime.datetime.utcnow()
@@ -83,28 +84,6 @@ class User_TB(Base):
         rtn = (True, model)
         return rtn
 
-    def pwd_validate(self, name, password):
-        test_pwd = hashlib.sha512(self.salt + password).hexdigest()
-
-        result = 0
-        db_pass_len = len(self.password)
-        test_pass_len = len(test_pwd)
-        result = db_pass_len ^ test_pass_len
-        print 'result: %s' % result
-        if result != 0:
-            logger.warning('user: %s password length incorrect' % name)
-            return (False, 'password incorrect.')
-
-        for i in xrange(db_pass_len):
-            result += (ord(test_pwd[i]) ^ ord(self.password[i]))
-
-        print 'result: %s' % result
-        if result == 0:
-            return (True, 'password is correct')
-        else:
-            logger.warning('user: %s password incorrect' % name)
-            return (False, 'password is incorrect.')
-
     @ModelMethod(logger)
     def change_password(self, new_password):
         global DBSession
@@ -116,4 +95,87 @@ class User_TB(Base):
         rtn = (True, None)
         return rtn
 
+    @classmethod
+    @ModelMethod(logger)
+    def all_to_json_array(cls, request):
+        success = True
+        if request.scarab_settings['backend_db'] == 'sqlite':
+            json_array = [{'error': 'sqlite does not implement array_to_json()'}]
+        elif request.scarab_settings['backend_db'] == 'postgres':
+            logger.debug('execut array_to_json()')
+            json_array = cls._pg_all_to_json_array()
+        json_array = [] if json_array == None else json_array
+        return success, json_array
+
+    @classmethod
+    def _pg_all_to_json_array(cls):
+        sql_expression = \
+            """
+            select array_to_json(array_agg(t)) from (
+                select 
+                    user_id,
+                    group_id,
+                    description,
+                    user_name,
+                    activated,
+                createddatetime, updateddatetime from %s) t;
+            """ % (cls.__tablename__)
+
+        users = DBSession.execute(sql_expression).scalar()
+        logger.debug('json users: %s' % users)
+        return users
+
+    @ModelMethod(logger)
+    def pwd_validate(self, name, password):
+        test_pwd = hashlib.sha512(self.salt + password).hexdigest()
+
+        result = 0
+        db_pass_len = len(self.password)
+        test_pass_len = len(test_pwd)
+        result = db_pass_len ^ test_pass_len
+        if result != 0:
+            logger.warning('user: %s password length incorrect' % name)
+            return (False, 'password incorrect.')
+
+        for i in xrange(db_pass_len):
+            result += (ord(test_pwd[i]) ^ ord(self.password[i]))
+
+        if result == 0:
+            return (True, 'password is correct')
+        else:
+            logger.warning('user: %s password incorrect' % name)
+            return (False, 'password is incorrect.')
+
+    @ModelMethod(logger)
+    def to_json(self, request):
+        success = True
+        json_obj = {}
+        if request.scarab_settings['backend_db'] == 'sqlite':
+            json_obj = self._manual_to_json()
+        elif request.scarab_settings['backend_db'] == 'postgres':
+            logger.debug('execut row_to_json()')
+            json_obj = self._pg_row_to_json()
+
+        logger.debug('this is json_obj: %s' % json_obj)
+        if json_obj != None:
+            json_obj.pop('password')
+            json_obj.pop('salt')
+        else:
+            json_obj = {}
+        return success, json_obj
+
+    def _manual_to_json(self):
+        logger.warning('sqlite does not implement row_to_json()')
+        return None
+
+    def _pg_row_to_json(self):
+        sql_expression = \
+            """
+            select row_to_json(u) from (
+                select *
+                from %s where user_id = %s) u;
+            """ % (self.__tablename__, self.user_id)
+        user = DBSession.execute(sql_expression).scalar()
+        logger.debug('json user: %s' % user)
+        return user
 

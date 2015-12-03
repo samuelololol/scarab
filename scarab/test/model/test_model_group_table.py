@@ -11,7 +11,7 @@ from scarab.models import DBSession
 from utils import id_generator
 
 @pytest.fixture(scope='module')
-def A_group(request, sqlite_engine_fixture):
+def A_group(request, engine_fixture):
     group_table = models.account.Group_TB
     with transaction.manager as tm:
         group = group_table(group_name=id_generator(size=25).decode('utf-8'))
@@ -30,12 +30,12 @@ def A_group(request, sqlite_engine_fixture):
     request.addfinalizer(fin)
     return group
 
-def test_query_group(sqlite_engine_fixture, A_group):
+def test_query_group(engine_fixture, A_group):
     group_table = models.account.Group_TB
     group = DBSession.query(group_table).filter(group_table.group_name == A_group.group_name).scalar()
     assert group.group_name == A_group.group_name
 
-def test_modify_group(sqlite_engine_fixture, A_group):
+def test_modify_group(engine_fixture, A_group):
     group_table = models.account.Group_TB
     model = DBSession.query(group_table).filter(group_table.group_name == A_group.group_name).scalar()
     assert model.group_id == A_group.group_id
@@ -49,7 +49,7 @@ def test_modify_group(sqlite_engine_fixture, A_group):
         find_group = DBSession.query(group_table).filter(group_table.group_name == new_group_name).scalar()
         assert find_group.group_id == original_group_id
 
-def test_delete_group(sqlite_engine_fixture):
+def test_delete_group(engine_fixture):
     group_table = models.account.Group_TB
     new_group_name = id_generator(size=25).decode('utf-8')
     with transaction.manager as tm:
