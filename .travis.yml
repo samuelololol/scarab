@@ -16,4 +16,5 @@ env:
 install: 
     - pip install webtest
     - python setup.py install
+    - initialize_scarab_db development.ini
 script: "python setup.py test -a '-s'"
