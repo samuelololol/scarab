@@ -118,9 +118,9 @@ class User_TB(Base):
                     description,
                     user_name,
                     activated,
-                createddatetime, updateddatetime from %s) t;
-            """ % (cls.__tablename__)
-
+                    createddatetime,
+                    updateddatetime
+                from %s) t; """ % (cls.__tablename__)
         users = DBSession.execute(sql_expression).scalar()
         logger.debug('json users: %s' % users)
         return users
