@@ -108,11 +108,11 @@ def test_user_to_json(engine_fixture, A_user, MockedRequest):
     assert user_json['user_id'] == original_user_id
     assert user_json['user_name'] == original_user_name
 
-def test_user_list_to_array(engine_fixture, MockedRequest):
+def test_user_list_to_array(engine_fixture, A_user, MockedRequest):
     user_table = models.account.User_TB
     user_list = user_table.all_to_json_array(MockedRequest)
 
     assert True == isinstance(user_list, list)
-    assert user_list[0]['user_id'] == 1
-    assert user_list[0]['user_name'] == u'public'
+    assert A_user.user_id in [u['user_id'] for u in user_list]
+    assert A_user.user_name in [u['user_name'] for u in user_list]
 
