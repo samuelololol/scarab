@@ -23,6 +23,8 @@ import webtest
 from webtest import TestApp
 from scarab import main
 
+from pyramid.testing import DummyRequest
+
 def db_config(key):
     config_path = os.path.dirname(__file__)    # scarab/scarab/test
     config_path = os.path.dirname(config_path) # scarab/scarab
@@ -84,3 +86,10 @@ def ScarabApp(request):
     testapp = TestApp(app)
     return testapp
 
+@pytest.fixture(scope='function')
+def MockedRequest(request):
+    scarab_settings = {}
+    scarab_settings['backend_db'] = backend_db = db_config('backend_db')
+    req = DummyRequest()
+    req.scarab_settings = scarab_settings
+    return req
