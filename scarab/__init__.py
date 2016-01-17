@@ -13,13 +13,7 @@ from scarab.models import (
     DBSession,
     Base,
     )
-
 from scarab.security import get_user
-from scarab.security import groupfinder
-
-#security
-from pyramid.authentication import AuthTktAuthenticationPolicy
-from pyramid.authorization import ACLAuthorizationPolicy
 
 def _fk_pragma_on_connect(dbapi_con, con_record):
     dbapi_con.execute('pragma foreign_key=ON')
@@ -32,7 +26,7 @@ def main(global_config, **settings):
 
     scarab_settings = {}
     scarab_settings['backend_db'] = settings['backend_db']
-    def get_luwak_settings(request):
+    def get_scarab_settings(request):
         return scarab_settings
 
     #enable sqlite foreignkey if sqlite
@@ -45,15 +39,10 @@ def main(global_config, **settings):
     config = Configurator(root_factory='scarab.models.RootFactory', settings=settings)
     #api routes
     api_routes(config)
-    #security
-    authn_policy = AuthTktAuthenticationPolicy(settings['scarab.auth_secret'], callback=groupfinder, hashalg='sha512')
-    authz_policy = ACLAuthorizationPolicy()
-    config.set_authentication_policy(authn_policy)
-    config.set_authorization_policy(authz_policy)
 
     #embeded userojb to request
     config.add_request_method(get_user, 'user', reify=True)
-    config.add_request_method(get_luwak_settings, 'scarab_settings', reify=True)
+    config.add_request_method(get_scarab_settings, 'scarab_settings', reify=True)
 
     #all setting is done, scan config
     config.scan()

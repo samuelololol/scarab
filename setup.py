@@ -18,6 +18,7 @@ requires = [
     'pyramid_tm',
     'pyramid_debugtoolbar',
     'pyramid-jinja2',
+    'pyramid_multiauth',
     'zope.sqlalchemy',
     'formencode',
     'lxml',
