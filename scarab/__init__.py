@@ -14,6 +14,7 @@ from scarab.models import (
     Base,
     )
 from scarab.security import get_user
+from scarab.security import apply_multiauth
 
 def _fk_pragma_on_connect(dbapi_con, con_record):
     dbapi_con.execute('pragma foreign_key=ON')
@@ -43,6 +44,9 @@ def main(global_config, **settings):
     #embeded userojb to request
     config.add_request_method(get_user, 'user', reify=True)
     config.add_request_method(get_scarab_settings, 'scarab_settings', reify=True)
+
+    #security
+    #config = apply_multiauth(config, settings['scarab.auth_secret'])
 
     #all setting is done, scan config
     config.scan()

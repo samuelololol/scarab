@@ -31,12 +31,12 @@ class UserAPI(object):
         self.context = context
         self.request = request
 
-    @view_config(route_name='api_users', request_method='GET', permission='view')
+    @view_config(route_name='api_users', request_method='GET', permission='login')
     def api_users_get(self):
         success, data = get_all_users_info(self.request)
         return {'name': 'users', 'method': 'GET', 'data': data}
 
-    @view_config(route_name='api_user', request_method='GET', permission='view')
+    @view_config(route_name='api_user', request_method='GET', permission='login')
     def api_user_get(self):
         user_id = self.request.matchdict['id']
         success, data = get_user_info(self.request, user_id)

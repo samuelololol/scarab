@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 __date__= 'Mar 06, 2014 '
 __author__= 'samuel'
+import logging
+logger = logging.getLogger(__name__)
 
 from pyramid.security import unauthenticated_userid
 
@@ -9,6 +11,9 @@ from scarab.models.account import User_TB
 from scarab.models import DBSession
 import transaction
 
+#security
+from pyramid.authentication import AuthTktAuthenticationPolicy
+from pyramid.authorization import ACLAuthorizationPolicy
 
 def get_user(request):
     user_name = unauthenticated_userid(request)
@@ -20,15 +25,19 @@ def get_user(request):
 
 
 def groupfinder(userid, request):
+    logger.debug('groupfinder: userid: %s' % userid)
     user = request.user
+    return_groups = []
     if user is not None:
-        return [ user.group.group_name.encode('utf-8') ]
-    else:
-        []
+        return_groups.append(user.group.group_name.encode('utf-8'))
+    logger.debug('groupfinder: groups %s' % return_groups)
+    return return_groups
 
 
-def main():
-    pass
+def apply_multiauth(config, secret):
+    authn_policy = AuthTktAuthenticationPolicy(secret, callback=groupfinder, hashalg='sha512')
+    authz_policy = ACLAuthorizationPolicy()
+    config.set_authentication_policy(authn_policy)
+    config.set_authorization_policy(authz_policy)
+    return config
 
-if __name__ == '__main__':
-    main()
