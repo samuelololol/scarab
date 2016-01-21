@@ -5,6 +5,7 @@
 - Add pyramid_celery
 - Add pyramid_multiauth
 - Add to_json feature to User_TB model when using postgresql(row_to_json())
+- Upgrade pyramid to 1.6b3
 
 
 0.1

@@ -12,7 +12,7 @@ requires = [
     'BeautifulSoup',
     'requests',
     'celery[redis]',
-    'pyramid==1.6b2',
+    'pyramid==1.6b3',
     'SQLAlchemy',
     'transaction',
     'pyramid_tm',
