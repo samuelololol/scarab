@@ -33,13 +33,8 @@ def test_session_post_fail(engine_fixture, ScarabApp):
     assert json.loads(res.body)['success']== False
 
 
-def test_session_delete(engine_fixture, ScarabApp):
-    print 'test_session_delete()'
-    form = dict()
-    form['username'] = 'public'
-    form['password'] = '12345678'
-    res = ScarabApp.post('/api/v1/session', form)
-    assert json.loads(res.body)['success']== True
+def test_session_delete(engine_fixture, LoggedInApp):
+    ScarabApp = LoggedInApp
 
     res = ScarabApp.delete('/api/v1/session')
     assert res.status_int == 204

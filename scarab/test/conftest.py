@@ -10,6 +10,8 @@ logging.getLogger().addHandler(logging.StreamHandler())
 import sys
 import ConfigParser
 import io
+import json
+import os
 
 import pytest
 import tempfile
@@ -18,7 +20,6 @@ from sqlalchemy.pool import NullPool
 from scarab.models import DBSession, Base
 from scarab.scripts.initializedb import initialization
 
-import os
 import webtest
 from webtest import TestApp
 from scarab import main
@@ -78,8 +79,9 @@ def ScarabApp(request):
                 'backend_db':         db_config('backend_db'),
                 'pyramid.includes':   ['pyramid_tm', 'pyramid_jinja2'],
                 'jinja2.directories': 'scarab:templates',
-                'scarab.auth_secret': '123abc',
+                'scarab.auth_secret': '<no-that-secret>',
                 }
+
     initialization(engine=DBSession.get_bind(), drop_all=True)
     DBSession.close()
     app = main({}, **settings)
@@ -93,3 +95,16 @@ def MockedRequest(request):
     req = DummyRequest()
     req.scarab_settings = scarab_settings
     return req
+
+
+#for functional API tests
+@pytest.fixture(scope='function')
+def LoggedInApp(ScarabApp):
+    #login first
+    form = dict()
+    form['username'] = 'public'
+    form['password'] = '12345678'
+    res = ScarabApp.post('/api/v1/session', form)
+    assert json.loads(res.body)['success']== True
+    return ScarabApp
+

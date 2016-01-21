@@ -13,8 +13,13 @@ from scarab.models import (
     DBSession,
     Base,
     )
+
+from pyramid.authentication import AuthTktAuthenticationPolicy
+from pyramid_multiauth import MultiAuthenticationPolicy
+from pyramid.authorization import ACLAuthorizationPolicy
+
 from scarab.security import get_user
-from scarab.security import apply_multiauth
+from scarab.security import groupfinder
 
 def _fk_pragma_on_connect(dbapi_con, con_record):
     dbapi_con.execute('pragma foreign_key=ON')
@@ -46,7 +51,14 @@ def main(global_config, **settings):
     config.add_request_method(get_scarab_settings, 'scarab_settings', reify=True)
 
     #security
-    #config = apply_multiauth(config, settings['scarab.auth_secret'])
+    #add policies here
+    policies =[AuthTktAuthenticationPolicy(settings['scarab.auth_secret'],
+                                           callback=groupfinder,
+                                           hashalg='sha512')]
+    authn_policy = MultiAuthenticationPolicy(policies)
+    authz_policy = ACLAuthorizationPolicy()
+    config.set_authentication_policy(authn_policy)
+    config.set_authorization_policy(authz_policy)
 
     #all setting is done, scan config
     config.scan()
