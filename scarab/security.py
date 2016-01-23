@@ -11,10 +11,6 @@ from scarab.models.account import User_TB
 from scarab.models import DBSession
 import transaction
 
-#security
-from pyramid.authentication import AuthTktAuthenticationPolicy
-from pyramid.authorization import ACLAuthorizationPolicy
-
 def get_user(request):
     #user_name = unauthenticated_userid(request)
     user_name = request.unauthenticated_userid

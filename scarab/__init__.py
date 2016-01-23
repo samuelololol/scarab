@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 from pyramid.config import Configurator
 from sqlalchemy import engine_from_config
@@ -30,13 +30,15 @@ def main(global_config, **settings):
     global DBSession, Base
     engine = engine_from_config(settings, 'sqlalchemy.')
 
+    backend_db = 'sqlite' if 'sqlite://' in settings['sqlalchemy.url'] else 'postgres'
     scarab_settings = {}
-    scarab_settings['backend_db'] = settings['backend_db']
+    scarab_settings['backend_db'] = backend_db
+    logger.debug('scarab_settings: %s' % scarab_settings)
     def get_scarab_settings(request):
         return scarab_settings
 
     #enable sqlite foreignkey if sqlite
-    if 'sqlite' == settings['backend_db']:
+    if 'sqlite' == backend_db:
         event.listen(engine, 'connect', _fk_pragma_on_connect) #db foreignkey on
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
@@ -44,14 +46,13 @@ def main(global_config, **settings):
 
     config = Configurator(root_factory='scarab.models.RootFactory', settings=settings)
     #api routes
-    api_routes(config)
+    config.include(api_routes)
 
     #embeded userojb to request
     config.add_request_method(get_user, 'user', reify=True)
     config.add_request_method(get_scarab_settings, 'scarab_settings', reify=True)
 
-    #security
-    #add policies here
+    #security; add policies here
     policies =[AuthTktAuthenticationPolicy(settings['scarab.auth_secret'],
                                            callback=groupfinder,
                                            hashalg='sha512')]

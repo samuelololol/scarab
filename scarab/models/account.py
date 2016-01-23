@@ -89,16 +89,17 @@ class User_TB(Base):
 
     @classmethod
     def all_to_json_array(cls, request, ignore=['password', 'salt']):
-        if request.scarab_settings['backend_db'] == 'sqlite':
-            json_array = cls._manual_all_to_json_array(ignore=ignore)
-        elif request.scarab_settings['backend_db'] == 'postgres':
+        if request.scarab_settings['backend_db'] == 'postgres':
             json_array = cls._pg_all_to_json_array(ignore=ignore)
+        #elif request.scarab_settings['backend_db'] == 'sqlite':
+        else:
+            json_array = cls._manual_all_to_json_array(ignore=ignore)
         json_array = [] if json_array == None else json_array
         return json_array
 
     @classmethod
     def _manual_all_to_json_array(cls, ignore=['password', 'salt']):
-        logger.debug('sqlite does not implement array_to_json()')
+        logger.debug('Database not implement array_to_json()')
         users_list = []
         users = DBSession.query(cls).all()
         if users != None:
@@ -143,17 +144,17 @@ class User_TB(Base):
 
     def to_json(self, request, ignore=['password', 'salt']):
         json_obj = {}
-        if request.scarab_settings['backend_db'] == 'sqlite':
-            json_obj = self._manual_to_json(ignore=ignore)
-        elif request.scarab_settings['backend_db'] == 'postgres':
+        if request.scarab_settings['backend_db'] == 'postgres':
             json_obj = self._pg_row_to_json(ignore=ignore)
-
+        #if request.scarab_settings['backend_db'] == 'sqlite':
+        else:
+            json_obj = self._manual_to_json(ignore=ignore)
         logger.debug('this is json_obj: %s' % json_obj)
         json_obj = {} if json_obj == None else json_obj
         return json_obj
 
     def _manual_to_json(self, ignore=['password', 'salt']):
-        logger.debug('sqlite does not implement row_to_json()')
+        logger.debug('Database does not implement row_to_json()')
         time_format = '%Y-%m-%dT%H:%M:%S%z.%f'
         user = {}
         user['user_id'] = self.user_id

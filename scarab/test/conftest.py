@@ -6,6 +6,7 @@ import logging
 FORMAT = "%(asctime)s %(levelname)-5.5s [%(name)s][%(threadName)s] %(message)s"
 logging.basicConfig(format=FORMAT)
 logging.getLogger().addHandler(logging.StreamHandler())
+logger = logging.getLogger(__name__)
 
 import sys
 import ConfigParser
@@ -39,8 +40,8 @@ def get_config_settings(key):
 
 @pytest.fixture(scope='session')
 def engine_fixture(request):
-    backend_db = get_config_settings('backend_db')
-    print 'backend_db: %s' % backend_db
+    backend_db = 'sqlite' if 'sqlite://' in get_config_settings('sqlalchemy.url') else 'postgres'
+    logger.debug('backend_db: %s' % backend_db)
     if backend_db == 'sqlite':
         db_path = tempfile.NamedTemporaryFile(suffix='.sqlite', delete=False).name #use tempfile directly
         DB_URL = 'sqlite:///' + db_path
@@ -48,23 +49,23 @@ def engine_fixture(request):
         connection = engine.connect()
         DBSession.configure(bind=engine)
         Base.metadata.bind = engine
-        print '(sqlite_engine_fixture) created, sqlite file: %s' % db_path
+        logger.debug('(sqlite_engine_fixture) created, sqlite file: %s' % db_path)
     else:
         DB_URL = get_config_settings('sqlalchemy.url')
         engine = create_engine(DB_URL)
         connection = engine.connect()
         DBSession.configure(bind=engine)
         Base.metadata.bind = engine
-        print '(postgres_engine_fixture) created, postgres url: %s' % DB_URL
+        logger.debug('(postgres_engine_fixture) created, postgres url: %s' % DB_URL)
     def fin():
         DBSession.close()
         DBSession.remove()
         connection.close()
         if backend_db == 'sqlite':
             os.unlink(db_path)
-            print '(sqlite_engine_fixture) delete, remove sqlitedb file: %s' % db_path
+            logger.debug('(sqlite_engine_fixture) delete, remove sqlitedb file: %s' % db_path)
         else:
-            print '(postgres_engine_fixture) fin with postgresdb url: %s' % DB_URL
+            logger.debug('(postgres_engine_fixture) fin with postgresdb url: %s' % DB_URL)
     request.addfinalizer(fin)
     #return engine
     return backend_db
@@ -78,7 +79,8 @@ def ScarabApp(request):
 
 @pytest.fixture(scope='function')
 def MockedRequest(request):
-    scarab_settings = {'backend_db': get_config_settings('backend_db')}
+    backend_db = 'sqlite' if 'sqlite://' in get_config_settings('sqlalchemy.url') else 'postgres'
+    scarab_settings = {'backend_db': backend_db}
     req = DummyRequest()
     req.scarab_settings = scarab_settings
     return req
