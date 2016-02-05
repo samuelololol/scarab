@@ -54,7 +54,7 @@ class PyTest(TestCommand):
 
 
 setup(name='scarab',
-      version='0.2b',
+      version='0.2',
       description='scarab',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
