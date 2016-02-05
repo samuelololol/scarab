@@ -18,7 +18,7 @@ def login(request, username, password):
     user = DBSession.query(User_TB).filter(User_TB.user_name == username.decode('utf-8')).scalar()
     logger.debug('trying to find user with username: %s, result: %s' % (username, user))
 
-    headers = None
+    headers = {}
     success  = False
     if user:
         success = True

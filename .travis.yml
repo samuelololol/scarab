@@ -3,11 +3,16 @@ language: python
 python:
     - "2.6"
     - "2.7"
-before_install:
-    - sudo apt-get update -qq
-    - sudo apt-get install -qq postgresql -y
-services:
-    - postgresql
+#before_install:
+#    - sudo apt-get update -qq
+#    - sudo apt-get install -qq postgresql -y
+sudo: false
+addons:
+    postgresql: '9.4'
+    apt:
+        packages:
+            - postgresql
+
 #before_script:
 #    - psql -c 'create database postgres;' -U postgres
 #<already exists>.
@@ -16,4 +21,5 @@ env:
 install: 
     - pip install webtest
     - python setup.py install
+    - initialize_scarab_db development.ini
 script: "python setup.py test -a '-s'"

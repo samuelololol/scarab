@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/samuelololol/scarab.svg?branch=master)](https://travis-ci.org/samuelololol/scarab)
+[![Build Status](https://travis-ci.org/samuelololol/scarab.svg?branch=v0.2-branch)](https://travis-ci.org/samuelololol/scarab)
 ![logo][2]
 # scarab
 

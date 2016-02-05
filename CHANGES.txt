@@ -1,3 +1,23 @@
+0.2
+---
+
+- Add User API
+- Add pyramid_celery
+- Add pyramid_multiauth
+- Add to_json feature to User_TB model when using postgresql(row_to_json())
+- Upgrade pyramid to 1.6b3
+
+
+0.1
+---
+
+- Portal Page
+- Login Page
+- Integrate with pytest
+- Unittests for models
+- Functional tests for APIs
+- Integrate with scarab_util
+
 0.0
 ---
 

@@ -12,12 +12,13 @@ requires = [
     'BeautifulSoup',
     'requests',
     'celery[redis]',
-    'pyramid==1.6b2',
+    'pyramid==1.6b3',
     'SQLAlchemy',
     'transaction',
     'pyramid_tm',
     'pyramid_debugtoolbar',
     'pyramid-jinja2',
+    'pyramid_multiauth',
     'zope.sqlalchemy',
     'formencode',
     'lxml',
@@ -53,7 +54,7 @@ class PyTest(TestCommand):
 
 
 setup(name='scarab',
-      version='0.1',
+      version='0.2b',
       description='scarab',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
